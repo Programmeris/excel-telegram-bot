@@ -1,10 +1,14 @@
+import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from openpyxl import load_workbook
 
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+XLSX_FILE_PATH = os.getenv("XLSX_FILE_PATH")
+
 async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message and update.message.text:
-        workbook = load_workbook('test.xlsx')
+        workbook = load_workbook(XLSX_FILE_PATH)
         sheet = workbook.active
         response_message = ''
 
@@ -19,7 +23,7 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main():
     try:
-        app = ApplicationBuilder().token("BOT_TOKEN").build()
+        app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
         app.add_handler(CommandHandler("find", find))
         app.run_polling()
     except Exception as err:
