@@ -9,16 +9,21 @@ async def find(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         response_message = ''
 
         for row in sheet.iter_rows():
-            parsed_message = update.message.text.replace("/find", "").strip() 
-            if parsed_message == str(row[0].value):
+            parsed_message = update.message.text.replace("/find", "").strip()
+            keywords = str(row[0].value).split(";")
+            keyword_match = any(element in parsed_message for element in keywords)
+            if keyword_match:
                 response_message += row[1].value
                 
         await update.message.reply_text(f"{response_message}")
 
 def main():
-    app = ApplicationBuilder().token("BOT_TOKEN").build()
-    app.add_handler(CommandHandler("find", find))
-    app.run_polling()
+    try:
+        app = ApplicationBuilder().token("BOT_TOKEN").build()
+        app.add_handler(CommandHandler("find", find))
+        app.run_polling()
+    except Exception as err:
+        print(f"Unexpected {err=}, {type(err)=}")
 
 if __name__ == "__main__":
     main()
